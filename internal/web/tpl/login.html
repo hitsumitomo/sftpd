@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Restricted area</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0zIDIwaDciIC8+PHBhdGggZD0iTTE0IDIwaDciIC8+PHBhdGggZD0iTTEwIDIwYTIgMiAwIDEgMCA0IDBhMiAyIDAgMCAwLTQgMCIgLz48cGF0aCBkPSJNMTIgMTZ2MiIgLz48cGF0aCBkPSJNMyAyMGg3IiAvPjxwYXRoIGQ9Ik0xNCAyMGg3IiAvPjxwYXRoIGQ9Ik0xMCAyMGEyIDIgMCAxIDAgNCAwYTIgMiAwIDAgMC00IDAiIC8+PHBhdGggZD0iTTEyIDE2djIiIC8+PHBhdGggZD0iTTggMTYuMDA0aC0xLjM0M2MtMi41NzIgLS4wMDQgLTQuNjU3IC0yLjAxMSAtNC42NTcgLTQuNDg3YzAgLTIuNDc1IDIuMDg1IC00LjQ4MiA0LjY1NyAtNC40ODJjLjM5MyAtMS43NjIgMS43OTQgLTMuMiAzLjY3NSAtMy43NzNjMS44OCAtLjU3MiAzLjk1NiAtLjE5MyA1LjQ0NCAxYzEuNDg4IDEuMTkgMi4xNjIgMy4wMDcgMS43NyA0Ljc2OWguOTljMS45MTMgMCAzLjQ2NCAxLjU2IDMuNDY0IDMuNDg2YzAgMS45MjcgLTEuNTUxIDMuNDg3IC0zLjQ2NSAzLjQ4N2gtMi41MzUiIC8+PC9zdmc+">
+<style>
+*,
+*:before,
+*:after {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body {
+    background-color: #15202C;
+}
+.background {
+    width: 430px;
+    height: 520px;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    left: 50%;
+    top: 50%;
+}
+form {
+    width: 400px;
+    background-color: rgba(255,255,255,0.13);
+    position: absolute;
+    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 40px rgba(8,7,16,0.6);
+    padding: 40px 35px;
+}
+form * {
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    outline: none;
+    border: none;
+}
+form h3 {
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 32px;
+    text-align: center;
+}
+input {
+    display: block;
+    height: 50px;
+    width: 100%;
+    background-color: rgba(255,255,255,0.07);
+    border-radius: 3px;
+    padding: 0 10px;
+    margin-top: 5px;
+    font-size: 16px;
+    font-weight: 300;
+}
+::placeholder {
+    color: #AAA;
+}
+button {
+    margin-top: 5px;
+    width: 100%;
+    background-color: #002244;
+    color: #ffffff;
+    padding: 15px 0;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        transform 0.05s ease,
+        box-shadow 0.05s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    background-color: #003366;
+}
+
+button:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+}
+</style>
+</head>
+<body>
+    <form id="login-form">
+        <h3>Restricted Area</h3>
+        <input type="text" placeholder="Login" id="username" autocomplete="username">
+        <input type="password" placeholder="Password" id="password" autocomplete="current-password">
+        <button type="submit" id="login-btn">Login</button>
+        <div id="login-error" style="color:#ff0000; margin:10px 0 0 0; min-height:22px; font-size:15px;"></div>
+    </form>
+    <script>
+    const basePath = window.location.pathname;
+    document.getElementById('login-form').onsubmit = async function(e) {
+        e.preventDefault();
+        var btn = document.getElementById('login-btn');
+        var err = document.getElementById('login-error');
+        btn.disabled = true;
+        err.textContent = '';
+        try {
+            const res = await fetch(`${basePath}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value
+                })
+            });
+            if (!res.ok) throw new Error(await res.text());
+            window.location.href = basePath || '/';
+        } catch (e) {
+            err.textContent = 'Invalid username or password';
+        }
+        btn.disabled = false;
+    };
+    </script>
+</body>
+</html>

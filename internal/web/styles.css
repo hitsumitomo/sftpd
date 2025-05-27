@@ -1,0 +1,535 @@
+/* ============================================
+   1. GLOBAL STYLES AND RESET
+   ============================================ */
+* {
+    font-family: 'Monaco', 'Lucida Console', monospace;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #202B36;
+    color: #e0e0e0;
+    padding-top: 40px; /* Space for the top menu */
+}
+
+html {
+    overflow-y: scroll;
+}
+html::-webkit-scrollbar {
+    width: 12px;
+}
+
+html::-webkit-scrollbar-track {
+    background: transparent;
+}
+html::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 4px;
+}
+
+#app {
+    max-width: none;
+    margin: 0;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* ============================================
+   2. TOP NAVIGATION BAR
+   ============================================ */
+.top-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: #1e2a35;
+    z-index: 1000; /* Above content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* max-width: 1100px; */
+    width: 100%;
+    background-color: #101B26;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 15px;
+}
+
+.nav-menu li,
+.nav-menu li.add-dropdown {
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    cursor: pointer;
+    color: #90caf9;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    height: 40px;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+.nav-menu li[title="Add user"],
+.nav-menu li[title="Add group"] {
+    margin-left: 10px;
+    margin-right: 10px;
+    font-weight: bold;
+    background: none;
+    border-bottom: 3px solid transparent;
+    transition: background 0.2s, color 0.2s;
+}
+
+.nav-menu li[title="Add user"]:hover,
+.nav-menu li[title="Add group"]:hover {
+    background: #263238;
+    color: #fff;
+    border-bottom: 3px solid #4caf50;
+}
+
+.nav-menu li svg {
+    margin-right: 5px;
+}
+
+.nav-menu li.active,
+.nav-menu li:hover,
+.nav-menu li.add-dropdown:hover,
+.nav-menu li.add-dropdown:focus-within {
+    background: #263238;
+    border-bottom: 3px solid #90caf9;
+    color: #fff;
+    font-weight: bold;
+}
+
+.nav-menu li.logout-item {
+    margin-left: auto;
+    color: #c00;
+}
+
+/* Save Config menu item styles */
+.nav-menu li.save-config-item {
+    color: #0f0; /* Default text color green */
+    font-weight: normal; /* Not bold by default */
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.nav-menu li.save-config-item:hover {
+    background: #263238;
+    border-bottom: 3px solid #0f0;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Save Config state animations */
+.nav-menu li.save-config-item.saving {
+    animation: pulse 1.5s infinite ease-in-out;
+    background: #263238;
+    border-bottom: 3px solid #ffaa00;
+    color: #ffaa00;
+    font-weight: bold;
+}
+
+.nav-menu li.save-config-item.save-error {
+    background: #3a1010; /* Darker red background */
+    border-bottom: 3px solid #ff3333;
+    color: #ff3333;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-menu li.save-config-item.save-success {
+    background: #0a5a0a; /* Green background */
+    border-bottom: 3px solid #0f0;
+    color: #ffffff; /* White text */
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-menu li.add-dropdown {
+    position: relative;
+    font-weight: bold;
+    background: none;
+    color: #4caf50;
+    border-bottom: 3px solid transparent;
+    box-sizing: border-box;
+    height: 40px;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.nav-menu li.add-dropdown:hover,
+.nav-menu li.add-dropdown:focus-within {
+    background: #263238;
+    color: #fff;
+    font-weight: bold;
+    border-bottom-color: #4caf50;
+}
+
+.add-menu-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 120px;
+    background: #23272b;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    z-index: 1100;
+    padding: 4px 0;
+    margin: 0;
+    list-style: none;
+    border: 1px solid #222;
+}
+
+.add-menu-dropdown li {
+    padding: 7px 16px 7px 10px;
+    color: #e0e0e0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 500;
+    background: none;
+    border: none;
+    border-bottom: none;
+    height: auto;
+    transition: background 0.15s, color 0.15s;
+}
+
+.add-menu-dropdown li:hover {
+    background: #1976d2;
+    color: #fff;
+    border-bottom: none;
+    font-weight: normal;
+}
+
+/* ============================================
+   3. LAYOUT - MAIN CONTENT
+   ============================================ */
+.main-content {
+    flex: 1;
+    /* padding: 1em; */
+    box-sizing: border-box;
+    background: #202b36;
+    /* box-shadow: 0 0 10px rgba(0,0,0,0.3); */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 40px); /* Account for top menu */
+    width: 100%;
+    color: #e0e0e0;
+    margin: 0 auto;
+    overflow-y: auto;
+}
+
+.section-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    padding-top: 0px;
+    margin-bottom: 60px; /* Space for footer */
+}
+
+/* ============================================
+   4. FORM CONTROLS AND INPUTS
+   ============================================ */
+select, .form-control {
+    padding: 0.4em;
+    border-radius: 4px;
+    border: 1px solid #444;
+    background-color: #111827;
+    color: #e0e0e0;
+    width: 100%;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px #1976d233;
+    outline: none;
+}
+
+textarea.form-control {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 1100px;
+    max-width: 98vw;
+    background: #1F2937;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.settings-form .form-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.settings-form label {
+    font-size: 0.98em;
+    color: #b0b6be;
+    font-weight: 500;
+    min-width: 150px;
+    text-align: right;
+}
+
+.settings-form .form-control {
+    background: #111827;
+    color: #fff;
+    border: 1.5px solid #2d323c;
+    font-size: 1em;
+    padding: 2px 5px 1px 5px;
+    box-sizing: border-box;
+    width: 100%;
+    transition: border 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+.settings-form .form-control:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px #1976d233;
+    background: #122a42;
+}
+
+.settings-form .form-control::placeholder {
+    color: #555;
+    opacity: 1;
+    font-size: 1em;
+}
+
+.settings-form textarea.form-control {
+    min-height: 60px;
+    resize: vertical;
+}
+
+select.form-control option {
+    text-align: center;
+}
+
+/* ============================================
+   5. BUTTONS AND ACTION ELEMENTS
+   ============================================ */
+.btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    background: #1976d2;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.2s;
+}
+
+.btn:disabled {
+    background: #444;
+}
+
+.btn-action {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+/* ============================================
+   6. SECTION COMPONENTS
+   ============================================ */
+.section-header {
+    background-color: #1976D2;
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 7px 10px 5px 10px;
+    font-size: 1.2em;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.section-header:not(:has(div)) {
+    font-size: 1.2em;
+}
+
+.section-header.no-border {
+    border-bottom: none;
+}
+
+.settings-divider {
+    display: flex;
+    align-items: center;
+    margin: 0px 0 10px 0;
+    font-size: 1.08em;
+    font-weight: 600;
+    color: #1976D2;
+    letter-spacing: 0.03em;
+    border-bottom: 1.5px solid #1976D2;
+    padding-bottom: 2px;
+    background: none;
+}
+
+.settings-divider span {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   7. USER AND GROUP ITEMS
+   ============================================ */
+.setting-item > div,
+.user-item > div,
+.group-item > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-item, .group-item {
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    /* border-bottom: 1px solid #2f3b44; */
+}
+
+/* Mapping row styling */
+.mapping-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1px;
+    width: 100%;
+    gap: 0;
+}
+
+.mapping-row .btn-mapping-remove,
+.mapping-row .btn-action {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.mapping-row .btn-mapping-remove svg,
+.mapping-row .btn-action svg {
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+    width: 24px;
+    height: 24px;
+}
+
+.mapping-row .btn-mapping-remove,
+.mapping-row .btn-action {
+    margin-left: auto;
+}
+
+.mapping-row .btn-mapping-remove {
+    margin-left: auto !important;
+}
+
+/* ============================================
+   8. TABLES
+   ============================================ */
+.styled-table {
+    border-collapse: collapse;
+    margin: 20px 0;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: #19232e;
+}
+
+.styled-table thead tr {
+    background-color: #1976d2;
+    color: #ffffff;
+    text-align: left;
+}
+
+.styled-table th, .styled-table td {
+    padding: 10px;
+    border: 1px solid #2f3b44;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #1e2a35;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #1e2a35;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #32404a;
+}
+
+td {
+    padding: 2px;
+}
+
+td label {
+    display: block;
+    text-align: right;
+    width: 100%;
+    margin: 0;
+}
+
+/* ============================================
+   9. ALERTS AND NOTIFICATIONS
+   ============================================ */
+.alert-danger {
+    background: #3a2323;
+    color: #ffb3b3;
+}
+
+.alert {
+    background: #23272b;
+    color: #e0e0e0;
+}
+
+/* ============================================
+   10. ANIMATIONS
+   ============================================ */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+/* ============================================
+   11. UTILITY CLASSES
+   ============================================ */
+.text-center {
+    text-align: center;
+}
+
+.theme-toggle-btn,
+.theme-icon {
+    display: none;
+}

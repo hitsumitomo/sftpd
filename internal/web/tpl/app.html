@@ -1,0 +1,280 @@
+<div class="layout">
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <ul class="nav-menu">
+                <li :class="{active: section==='settings'}" @click="section='settings'">
+                    <svg style="position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-settings"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
+                    Settings
+                </li>
+                <li :class="{active: section==='users'}" @click="section='users'">
+                    <svg style="position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-users"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path d="M21 21v-2a4 4 0 0 0 -3 -3.85" /></svg>
+                    Users
+                </li>
+                <li :class="{active: section==='groups'}" @click="section='groups'">
+                    <svg style="position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-groups"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 5m0 1a1 1 0 0 1 1 -1h8a1 1 0 0 1 1 1v12a1 1 0 0 1 -1 1h-8a1 1 0 0 1 -1 -1z" /><path d="M22 17h-1a1 1 0 0 1 -1 -1v-8a1 1 0 0 1 1 -1h1" /><path d="M2 17h1a1 1 0 0 0 1 -1v-8a1 1 0 0 0 -1 -1h-1" /></svg>
+                    Groups
+                </li>
+                <!-- +Add dropdown -->
+                <li class="add-dropdown" @mouseenter="addMenuOpen = true" @mouseleave="addMenuOpen = false" style="position:relative;">
+                    <span style="display:flex;align-items:center;cursor:pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:relative;top:-2px;"><path d="M12 5v14m7-7H5"/></svg>
+                        Add
+                        <svg style="margin-left:3px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l3 3 3-3"/></svg>
+                    </span>
+                    <ul v-if="addMenuOpen" class="add-menu-dropdown">
+                        <li @mousedown.prevent="addUser(); addMenuOpen=false">
+                            User
+                        </li>
+                        <li @mousedown.prevent="addGroup(); addMenuOpen=false">
+                            Group
+                        </li>
+                    </ul>
+                </li>
+                <li @click="saveConfig" :class="['save-config-item', {'saving': saving, 'save-error': saveError, 'save-success': saveSuccess}]">
+                    <svg style="position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                        <path d="M7 9l5 -5l5 5" />
+                        <path d="M12 4l0 12" />
+                    </svg>
+                    Save Config
+                </li>
+                <li @click="exit" class="logout-item" style="margin-left: 200px">
+                    <svg style="position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-logout"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" /><path d="M9 12h12l-3 -3" /><path d="M18 15l3 -3" /></svg>
+                    Logout
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div v-if="error" class="alert alert-danger">{{ error }}</div>
+        <template v-if="config && !editing">
+            <!-- Settings Section -->
+            <div v-if="section==='settings'" class="section-container">
+                <form class="settings-form">
+                    <div class="setting-item">
+                        <div>
+                            <label for="addr">Addr</label>
+                            <input id="addr" class="form-control" v-model="draftConfig.addr" placeholder=":2022" />
+                        </div>
+                        <div>
+                            <label for="uid">UID</label>
+                            <input id="uid" class="form-control" type="number" v-model.number="draftConfig.uid" placeholder="Effective UID" />
+                        </div>
+                        <div>
+                            <label for="gid">GID</label>
+                            <input id="gid" class="form-control" type="number" v-model.number="draftConfig.gid" placeholder="Effective GID" />
+                        </div>
+                        <div>
+                            <label for="private">Private key</label>
+                            <textarea id="private" class="form-control" v-model="draftConfig.private" rows="7" placeholder="Paste private key"></textarea>
+                        </div>
+                        <div class="settings-divider">
+                            <span>
+                                HTTP settings
+                            </span>
+                        </div>
+                        <div>
+                            <label for="http_addr">Addr</label>
+                            <input id="http_addr" class="form-control" v-model="draftConfig.http.addr" placeholder=":8022" />
+                        </div>
+                        <div>
+                            <label for="http-url">URL</label>
+                            <input id="http_url" class="form-control" v-model="draftConfig.http.url" placeholder="Secured URL" />
+                        </div>
+                        <div>
+                            <label for="http-username">Username</label>
+                            <input id="http_username" class="form-control" v-model="draftConfig.http.username" />
+                        </div>
+                        <div>
+                            <label for="http-password">Password</label>
+                            <input id="http_password" class="form-control" type="password" v-model="draftConfig.http.password" />
+                        </div>
+                        <div>
+                            <label for="http-whitelist">Whitelist</label>
+                            <input id="http_whitelist" class="form-control" v-model="draftConfig.http.filter.whitelist" />
+                        </div>
+                        <div>
+                            <label for="http-blacklist">Blacklist</label>
+                            <input id="http_blacklist" class="form-control" v-model="draftConfig.http.filter.blacklist" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- Users Section -->
+            <div v-else-if="section==='users'" class="section-container">
+                <form class="settings-form">
+                    <div v-for="(user, login) in draftConfig.users" :key="login" class="user-item">
+                        <div style="display: flex; align-items: flex-end;">
+                            <label style="flex:0 0 70px;">Login</label>
+                            <div style="flex:1; position:relative;">
+                                <input class="form-control" v-model="user.login" :placeholder="login" :disabled="login !== 'new_user' && !login.startsWith('new_user_')" style="color: #0A0; padding-right:25px;" />
+                                <button @click.prevent="delete draftConfig.users[login]"
+                                    title="Delete user"
+                                    style="position:absolute; right:4px; top:50%; transform:translateY(-50%); background:none; border:none; padding:0; margin:0; cursor:pointer;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke="#c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M18 6l-12 12"/>
+                                        <path d="M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <label style="flex:0 0 10px; margin-left:2px;">Password</label>
+                            <div style="flex:1;">
+                                <input class="form-control" type="password" v-model="user.password" />
+                            </div>
+                            <label style="flex:0 0 10px; margin-left:2px;">Max Sessions</label>
+                            <div style="flex:0 0 50px;">
+                                <input class="form-control" type="number" min="0" v-model.number="user.max_sessions" style="width: 50px;" />
+                            </div>
+                        </div>
+                        <div>
+                            <label>Public Key</label>
+                            <input class="form-control" v-model="user.pubkey" />
+                        </div>
+                        <div>
+                            <label>Groups</label>
+                            <input class="form-control" v-model="user.groups" />
+                        </div>
+                        <div>
+                            <label>Whitelist</label>
+                            <input class="form-control"
+                                v-model="user.filter.whitelist" />
+                        </div>
+                        <div>
+                            <label>Blacklist</label>
+                            <input class="form-control"
+                                v-model="user.filter.blacklist" />
+                        </div>
+                        <div>
+                            <label>Mapping</label>
+                            <div style="flex:1; position:relative;">
+                                <div v-for="(m, idx) in user.mappingList" :key="idx" class="mapping-row">
+                                    <input class="form-control"
+                                        style="flex:0 0 30%;max-width:30%;min-width:0;"
+                                        v-model="m.name" placeholder="name" />
+                                        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M13 18l6 -6" /><path d="M13 6l6 6" /></svg>
+                                    <input class="form-control"
+                                        style="flex:0 0 55%;max-width:55%;min-width:0;"
+                                        v-model="m.path" placeholder="path" />
+                                    <select class="form-control"
+                                        style="flex:0 0 9%;max-width:9%;min-width:0;"
+                                        v-model="m.mode">
+                                        <option value="rw">R/W</option>
+                                        <option value="ro">R/O</option>
+                                        <option value="exec">EXEC</option>
+                                    </select>
+                                    <button v-if="idx>0" class="btn btn-danger btn-mapping-remove"
+                                        style="flex:0 0 40px;padding:0;background:none;border:none;box-shadow:none;"
+                                        @click.prevent="removeMapping(user, idx)" title="Remove mapping">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M18 6l-12 12" />
+                                        <path d="M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                    <span v-if="idx===0" class="btn-action btn-mapping-add"
+                                        @click.prevent="addMapping(user)"
+                                        title="Add mapping">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="24" height="24" viewBox="0 0 24 24"
+                                             fill="none" stroke="#1976D2" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round"
+                                             class="icon icon-tabler icons-tabler-outline icon-tabler-plus">
+                                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                          <path d="M12 5l0 14"/>
+                                          <path d="M5 12l14 0"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="user.mappingError">
+                            <label></label>
+                            <span class="text-danger">{{ user.mappingError }}</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- Groups Section -->
+            <div v-else-if="section==='groups'" class="section-container">
+                <form class="settings-form">
+                    <div v-for="(group, name) in draftConfig.groups" :key="name" class="group-item">
+                        <div style="position:relative; width:100%;">
+                            <label>Group</label>
+                            <input class="form-control" v-model="groupForms[name].name" :disabled="name !== 'new_group' && !name.startsWith('new_group_')" style="padding-right:32px; color: #0A0" />
+                            <button @click.prevent="delGroup(name)"
+                                title="Delete group"
+                                style="position:absolute; right:4px; top:50%; transform:translateY(-50%); background:none; border:none; padding:0; margin:0; cursor:pointer;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                                    stroke="#c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M18 6l-12 12"/>
+                                    <path d="M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div>
+                            <label>Whitelist</label>
+                            <input class="form-control"
+                                v-model="group.filter.whitelist" />
+                        </div>
+                        <div>
+                            <label>Blacklist</label>
+                            <input class="form-control"
+                                v-model="group.filter.blacklist" />
+                        </div>
+                        <div>
+                            <label>Mapping</label>
+                            <div style="flex:1; position:relative;">
+                                <div v-for="(m, idx) in groupForms[name].mappingList" :key="idx" class="mapping-row">
+                                    <input class="form-control"
+                                        style="flex:0 0 30%;max-width:30%;min-width:0;"
+                                        v-model="m.name" placeholder="name" />
+                                        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M13 18l6 -6" /><path d="M13 6l6 6" /></svg>
+                                    <input class="form-control"
+                                        style="flex:0 0 55%;max-width:55%;min-width:0;"
+                                        v-model="m.path" placeholder="path" />
+                                    <select class="form-control"
+                                        style="flex:0 0 9%;max-width:9%;min-width:0;"
+                                        v-model="m.mode">
+                                        <option value="rw">R/W</option>
+                                        <option value="ro">R/O</option>
+                                        <option value="exec">EXEC</option>
+                                    </select>
+                                    <button v-if="idx>0" class="btn btn-danger btn-mapping-remove"
+                                        style="flex:0 0 40px;padding:0;background:none;border:none;box-shadow:none;"
+                                        @click.prevent="removeGroupMapping(name, idx)" title="Remove mapping">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M18 6l-12 12" />
+                                        <path d="M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                    <span v-if="idx===0" class="btn-action btn-mapping-add"
+                                        @click.prevent="addGroupMapping(name)"
+                                        title="Add mapping">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="24" height="24" viewBox="0 0 24 24"
+                                             fill="none" stroke="#1976D2" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round"
+                                             class="icon icon-tabler icons-tabler-outline icon-tabler-plus">
+                                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                          <path d="M12 5l0 14"/>
+                                          <path d="M5 12l14 0"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </template>
+        <div v-if="editing">
+            <config-editor :config="config" @save="onSave"></config-editor>
+        </div>
+    </main>
+</div>
